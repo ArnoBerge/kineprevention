@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilan de Prévention Kiné | Votre Santé, Notre Priorité</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calme et Professionnel (Bleu doux, Gris neutre, Blanc cassé) -->
+    <!-- Application Structure Plan: Une structure narrative en une seule page qui guide l'utilisateur depuis la découverte du concept jusqu'à la prise de contact. L'ordre est : 1. Accroche (Hero), 2. Le Pourquoi (Bénéfices), 3. Le Déroulement (interactif pour détailler chaque étape), 4. La Technologie (crédibilité avec Kinvent), 5. Les Résultats (visualisation concrète avec un graphique interactif), 6. FAQ (lever les freins), 7. Contact. Cette structure progressive est conçue pour éduquer l'utilisateur, construire la confiance et le mener naturellement vers l'action, rendant l'information plus digeste et engageante qu'un simple flyer. -->
+    <!-- Visualization & Content Choices: 
+        - Le Déroulement: Report Info -> Détail des étapes du bilan. Goal -> Organiser/Informer. Viz -> Cartes interactives (HTML/CSS/JS). Interaction -> Clic pour révéler le contenu. Justification -> Décompose le processus complexe en étapes simples et interactives. Library -> Vanilla JS.
+        - Vos Résultats: Report Info -> Programme personnalisé et suivi de l'évolution. Goal -> Comparer/Montrer le changement. Viz -> Graphique Radar. Interaction -> Boutons pour basculer entre "Bilan Initial" et "Bilan de Suivi", mettant à jour les données du graphique. Justification -> Rend le bénéfice tangible et visuel, montrant concrètement la valeur du suivi. Library -> Chart.js.
+        - FAQ: Report Info -> Questions implicites (prix, durée, etc.). Goal -> Informer. Viz -> Accordéon. Interaction -> Clic pour ouvrir/fermer. Justification -> Répond aux questions fréquentes de manière concise et organisée. Library -> Vanilla JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: #5a6775;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+        }
+        .cta-button {
+            background-color: #3498db;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            display: inline-block;
+        }
+        .cta-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
+        }
+        .process-tab {
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .process-tab.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+        .faq-question {
+            cursor: pointer;
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-gray-800">Kiné<span class="text-blue-500">Prévention</span></div>
+            <div>
+                <a href="#contact" class="cta-button">Prendre RDV</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-gray-800 leading-tight">
+                    Prenez une longueur d'avance sur votre santé.
+                </h1>
+                <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto">
+                    Découvrez notre Bilan de Prévention personnalisé : une évaluation complète et scientifique pour identifier vos forces, déceler vos faiblesses et optimiser votre capital santé.
+                </p>
+                <div class="mt-8">
+                    <a href="#process" class="cta-button">Découvrir le bilan</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="why" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title">Pourquoi un Bilan de Prévention ?</h2>
+                <p class="section-subtitle">
+                    Investir dans la prévention, c'est agir aujourd'hui pour se sentir mieux demain. Notre bilan vous offre une vision claire et objective de votre condition physique.
+                </p>
+                <div class="grid md:grid-cols-3 gap-8 mt-12">
+                    <div class="card p-8 text-center">
+                        <div class="text-4xl mb-4">🎯</div>
+                        <h3 class="text-xl font-bold mb-2">Déceler les Déficits</h3>
+                        <p class="text-gray-600">Identifier de manière précoce les déséquilibres musculaires, les raideurs articulaires ou les faiblesses fonctionnelles avant qu'ils ne deviennent problématiques.</p>
+                    </div>
+                    <div class="card p-8 text-center">
+                        <div class="text-4xl mb-4">🚀</div>
+                        <h3 class="text-xl font-bold mb-2">Optimiser les Performances</h3>
+                        <p class="text-gray-600">Que vous soyez sportif ou actif, comprenez vos points forts et vos axes d'amélioration pour atteindre vos objectifs en toute sécurité.</p>
+                    </div>
+                    <div class="card p-8 text-center">
+                        <div class="text-4xl mb-4">🛡️</div>
+                        <h3 class="text-xl font-bold mb-2">Prévenir les Blessures</h3>
+                        <p class="text-gray-600">En agissant sur les déficits identifiés, vous réduisez activement le risque de blessures futures et assurez la longévité de votre pratique.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="process" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title">Le Déroulement du Bilan</h2>
+                <p class="section-subtitle">
+                    Chaque bilan est une investigation complète, structurée autour de quatre piliers fondamentaux basés sur les données scientifiques actuelles. Cliquez sur chaque étape pour en savoir plus.
+                </p>
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex justify-center border-b mb-8 space-x-4 md:space-x-8">
+                        <div id="tab-1" class="process-tab pb-2 font-semibold active">1. Questionnaires</div>
+                        <div id="tab-2" class="process-tab pb-2 font-semibold">2. Mesures</div>
+                        <div id="tab-3" class="process-tab pb-2 font-semibold">3. Tests</div>
+                        <div id="tab-4" class="process-tab pb-2 font-semibold">4. Analyse</div>
+                    </div>
+                    <div id="content-1" class="process-content">
+                        <div class="card p-8 flex flex-col md:flex-row items-center gap-8">
+                            <div class="text-6xl">📝</div>
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">Anamnèse et Questionnaires Validés</h3>
+                                <p class="text-gray-600">La première étape consiste à comprendre votre histoire, vos objectifs, votre mode de vie et vos éventuelles douleurs. Nous utilisons pour cela des questionnaires standardisés et validés par la communauté scientifique pour une collecte d'informations rigoureuse et pertinente.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="content-2" class="process-content hidden">
+                         <div class="card p-8 flex flex-col md:flex-row items-center gap-8">
+                            <div class="text-6xl">📐</div>
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">Mesures Analytiques Précises</h3>
+                                <p class="text-gray-600">Nous évaluons de manière objective vos amplitudes articulaires et votre force musculaire. Ces données chiffrées sont essentielles pour quantifier vos capacités et identifier les asymétries ou les manques de mobilité et de force spécifiques.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="content-3" class="process-content hidden">
+                         <div class="card p-8 flex flex-col md:flex-row items-center gap-8">
+                            <div class="text-6xl">🏃</div>
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">Tests Fonctionnels et Dynamiques</h3>
+                                <p class="text-gray-600">La force et la souplesse ne font pas tout. Nous évaluons comment votre corps bouge dans son ensemble à travers des tests de sauts, d'équilibre et de mouvements fonctionnels. Cela nous permet d'analyser votre contrôle moteur, votre puissance et votre stabilité.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="content-4" class="process-content hidden">
+                         <div class="card p-8 flex flex-col md:flex-row items-center gap-8">
+                            <div class="text-6xl">📊</div>
+                            <div>
+                                <h3 class="text-2xl font-bold mb-2">Analyse et Restitution</h3>
+                                <p class="text-gray-600">Toutes les données collectées sont analysées pour créer votre profil de risque et de performance. Nous vous expliquons clairement les résultats et, si des déficits sont présents, nous vous proposons un plan d'action et un programme d'exercices 100% personnalisé.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tech" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">La Précision au Cœur du Bilan</h2>
+                        <p class="text-gray-600 mb-4">Pour une objectivité maximale, nous nous appuyons sur la technologie <span class="font-bold text-blue-500">Kinvent</span>. Ces capteurs de force et de mouvement nous fournissent des données chiffrées et fiables, bien au-delà de l'évaluation visuelle. C'est la garantie d'une analyse fine et d'un suivi précis de votre évolution.</p>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>✓ Mesure de force isométrique</li>
+                            <li>✓ Analyse de la qualité du mouvement</li>
+                            <li>✓ Biofeedback en temps réel</li>
+                            <li>✓ Suivi rigoureux des progrès</li>
+                        </ul>
+                    </div>
+                    <div class="card p-4">
+                        <img src="https://placehold.co/600x400/e2e8f0/334155?text=Illustration+Technologie+Kinvent" alt="Illustration de la technologie Kinvent" class="rounded-lg w-full">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="results" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title">Visualisez Votre Évolution</h2>
+                <p class="section-subtitle">
+                    Le bilan initial établit votre profil de base. En cas de programme personnalisé, un second bilan permet de mesurer concrètement vos progrès. Interagissez avec le graphique pour voir un exemple d'évolution.
+                </p>
+                <div class="card max-w-3xl mx-auto p-8">
+                    <div class="chart-container">
+                        <canvas id="resultsChart"></canvas>
+                    </div>
+                    <div class="flex justify-center mt-6 space-x-4">
+                        <button id="showInitial" class="cta-button bg-gray-500 hover:bg-gray-600">Bilan Initial</button>
+                        <button id="showFollowUp" class="cta-button">Bilan de Suivi</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="faq" class="py-16 md:py-24">
+            <div class="container mx-auto px-6 max-w-3xl">
+                <h2 class="section-title">Questions Fréquentes</h2>
+                <div id="faq-container" class="mt-8 space-y-4">
+                </div>
+            </div>
+        </section>
+
+        <footer id="contact" class="bg-gray-800 text-white py-16">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl font-bold mb-4">Prêt à faire le point ?</h2>
+                <p class="text-gray-300 max-w-xl mx-auto mb-8">
+                    Contactez-moi dès aujourd'hui pour planifier votre Bilan de Prévention et investir dans votre bien-être à long terme.
+                </p>
+                <div class="mb-8">
+                    <a href="mailto:contact@votreadresse.fr" class="cta-button">Prendre Rendez-vous</a>
+                </div>
+                <div class="text-gray-400">
+                    <p class="font-bold">[Votre Nom / Nom du Cabinet]</p>
+                    <p>[Votre Adresse, Ville]</p>
+                    <p>Tél : [Votre Numéro de Téléphone]</p>
+                    <p>Email : [Votre Adresse E-mail]</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            const tabs = document.querySelectorAll('.process-tab');
+            const contents = document.querySelectorAll('.process-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.add('hidden'));
+
+                    tab.classList.add('active');
+                    const contentId = 'content-' + tab.id.split('-')[1];
+                    document.getElementById(contentId).classList.remove('hidden');
+                });
+            });
+
+            const faqData = [
+                {
+                    question: "Ce bilan est-il remboursé par la sécurité sociale ou les mutuelles ?",
+                    answer: "Ce bilan est un acte de prévention déconventionné, il n'est donc pas pris en charge par la sécurité sociale. Certaines mutuelles peuvent proposer un remboursement partiel dans le cadre de forfaits 'bien-être' ou 'prévention'. Une facture vous sera fournie à cet effet."
+                },
+                {
+                    question: "Combien de temps dure une séance de bilan ?",
+                    answer: "La séance complète pour le bilan initial dure environ 1 heure. Ce temps nous permet de réaliser l'ensemble des questionnaires, mesures et tests de manière approfondie."
+                },
+                {
+                    question: "À qui s'adresse ce bilan ?",
+                    answer: "À tout le monde ! Que vous soyez un sportif cherchant à optimiser ses performances, une personne active soucieuse de prévenir les blessures, ou simplement quelqu'un qui souhaite faire un point complet sur sa condition physique, ce bilan est fait pour vous."
+                },
+                {
+                    question: "Que se passe-t-il si des déficits sont trouvés ?",
+                    answer: "Si le bilan révèle des points à améliorer, nous discutons ensemble des résultats. Je vous proposerai alors un programme d'exercices personnalisé et ciblé, réalisable à la maison ou au cabinet, pour corriger ces déficits. Un bilan de suivi peut être planifié pour mesurer les progrès."
+                }
+            ];
+
+            const faqContainer = document.getElementById('faq-container');
+            faqData.forEach(item => {
+                const faqItem = document.createElement('div');
+                faqItem.className = 'card';
+                faqItem.innerHTML = `
+                    <div class="faq-question p-6 flex justify-between items-center">
+                        <h3 class="font-semibold text-lg">${item.question}</h3>
+                        <span class="text-2xl text-blue-500 transform transition-transform duration-300">+</span>
+                    </div>
+                    <div class="faq-answer px-6">
+                        <p class="pb-6 text-gray-600">${item.answer}</p>
+                    </div>
+                `;
+                faqContainer.appendChild(faqItem);
+            });
+
+            const faqItems = document.querySelectorAll('.faq-question');
+            faqItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const answer = item.nextElementSibling;
+                    const icon = item.querySelector('span');
+                    
+                    if (answer.style.maxHeight && answer.style.maxHeight !== '0px') {
+                        answer.style.maxHeight = '0px';
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        answer.style.maxHeight = answer.scrollHeight + 'px';
+                        icon.style.transform = 'rotate(45deg)';
+                    }
+                });
+            });
+
+            const chartLabels = ['Force (Jambes)', 'Force (Tronc)', 'Souplesse', 'Équilibre', 'Puissance (Saut)', 'Contrôle Moteur'];
+            const initialData = [65, 55, 50, 70, 60, 55];
+            const followUpData = [85, 75, 70, 85, 80, 75];
+
+            const chartConfig = {
+                type: 'radar',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Bilan Initial',
+                        data: initialData,
+                        fill: true,
+                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                        borderColor: 'rgb(52, 152, 219)',
+                        pointBackgroundColor: 'rgb(52, 152, 219)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(52, 152, 219)'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: false
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            pointLabels: {
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                    }
+                }
+            };
+            
+            const ctx = document.getElementById('resultsChart').getContext('2d');
+            const resultsChart = new Chart(ctx, chartConfig);
+
+            document.getElementById('showInitial').addEventListener('click', () => {
+                resultsChart.data.datasets[0].data = initialData;
+                resultsChart.data.datasets[0].label = 'Bilan Initial';
+                resultsChart.update();
+            });
+
+            document.getElementById('showFollowUp').addEventListener('click', () => {
+                resultsChart.data.datasets[0].data = followUpData;
+                resultsChart.data.datasets[0].label = 'Bilan de Suivi';
+                resultsChart.update();
+            });
+        });
+    </script>
+</body>
+</html>
